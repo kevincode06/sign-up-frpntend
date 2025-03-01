@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Validation from './LoginValidation'; 
+import Validation from './LoginValidation';
 
 function Login() {
   const [values, setValues] = useState({
@@ -9,9 +9,8 @@ function Login() {
     password: '',
   });
 
-  const [errors, setErrors] = useState({}); // Initialize errors as an object
-
-  const navigate = useNavigate(); // Initialize navigate only once
+  const [errors, setErrors] = useState({}); 
+  const navigate = useNavigate(); 
 
   const handleInput = (event) => {
     setValues((prev) => ({ ...prev, [event.target.name]: event.target.value }));
@@ -19,10 +18,12 @@ function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setErrors(Validation(values)); // Ensure validation function exists
+    
+    const validationErrors = Validation(values); // Validate first
+    setErrors(validationErrors);
 
-    // Check if there are no errors before submitting
-    if (errors.email === "" && errors.password === "") {
+    // Ensure there are no validation errors before submitting
+    if (Object.keys(validationErrors).length === 0) {
       axios.post('http://localhost:8081/login', values)
         .then((res) => {
           if (res.data === "success") {
@@ -48,6 +49,7 @@ function Login() {
               type="email" 
               placeholder="Enter your email" 
               name="email" 
+              value={values.email} 
               onChange={handleInput} 
               className="form-control rounded-0" 
             />
@@ -60,6 +62,7 @@ function Login() {
               type="password" 
               placeholder="Enter your password" 
               name="password" 
+              value={values.password} 
               onChange={handleInput} 
               className="form-control rounded-0" 
             />
